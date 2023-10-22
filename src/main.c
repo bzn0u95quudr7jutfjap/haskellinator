@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "stack.h"
-#include "tree.h"
 
 STACK(char,String);
 void append(String * stack, String * data){
