@@ -15,8 +15,10 @@
                                                                                                    \
   void PUSH(STACK *stack, T data);                                                                 \
   void POP(STACK *stack);                                                                          \
-  const static STACK New##STACK = {                                                                \
-      .data = NULL, .capacity = 0, .size = 0, .push = PUSH, .pop = POP};                           \
+  STACK New##STACK() {                                                                             \
+    STACK tmp = {.data = NULL, .capacity = 0, .size = 0, .push = PUSH, .pop = POP};                \
+    return tmp;                                                                                    \
+  }                                                                                                \
                                                                                                    \
   void PUSH(STACK *stack, T data) {                                                                \
     if (stack->size == stack->capacity) {                                                          \

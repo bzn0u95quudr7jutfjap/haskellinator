@@ -1,22 +1,58 @@
+#include "stack.h"
+#include "tree.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "stack.h"
 
-STACK(char,String);
-void append(String * stack, String * data){
-  for(size_t i = 0; i < data->size; i++){
-    String_push(stack,data->data[i]);
-  }
+STACK(char, String);
+
+STACK(String, StackString);
+
+typedef struct CodeBlock CodeBlock;
+struct CodeBlock {
+  char id, fine;
+  String inizio;
+  StackString linee;
+};
+
+CodeBlock NewCodeBlock() {
+  CodeBlock tmp = {.id = 0, .fine = 0, .inizio = NewString(), .linee = NewStackString()};
+  return tmp;
 }
 
-STACK(String,Stack_String);
-typedef struct StringTree StringTree;
-struct StringTree{
-  String data;
-  Stack_String childs;
-};
+TREE(CodeBlock, StringTree);
+
+StringTree *add_child(StringTree *tree) {
+  Stack_StringTree *childs = &(tree->childs);
+  StringTree *child = malloc(sizeof(StringTree));
+  memcpy(child, &NewStringTree, sizeof(StringTree));
+  childs->push(childs, child);
+  return child;
+}
+
+size_t fsize(FILE *);
+char fpeekc(FILE *);
+void parse(StringTree *t, FILE *stream, size_t inizio) {
+  char c;
+  size_t len = fsize(stream);
+  for (size_t i = inizio; i < len && (c = fgetc(stream)) != EOF; i++) {
+    if (c == '{') {
+      parse(add_child(t), stream, ftell(stream));
+      continue;
+    }
+
+    if (c == '}') {
+      return;
+    }
+
+    if (c == '/' && fpeekc(stream) == '/') {
+      StringTree *tc = add_child(t);
+    }
+
+    String_push(&(t->data.inizio), c);
+  }
+}
 
 enum STATE { VIRGOLA, COMMENTO, MACRO, GRAFFA_A, GRAFFA_B };
 

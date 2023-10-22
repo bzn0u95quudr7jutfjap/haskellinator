@@ -6,4 +6,8 @@
   struct TREE {                                                                                    \
     T data;                                                                                        \
     Stack_##TREE childs;                                                                           \
+  };                                                                                               \
+  TREE New##TREE() {                                                                               \
+    TREE tmp = {.data = New##T(), .childs = NewStack_##TREE()};                                    \
+    return tmp;                                                                                    \
   }
