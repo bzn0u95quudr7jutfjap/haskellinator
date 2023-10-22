@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define STACK(T) MAKE_STACK(T, Stack_##T, Stack##_##T##_push, Stack##_##T##_pop)
+#define STACK(T,STACK) MAKE_STACK(T, STACK, STACK##_push, STACK##_pop)
 #define MAKE_STACK(T, STACK, PUSH, POP)                                                            \
   typedef struct STACK STACK;                                                                      \
                                                                                                    \
@@ -39,4 +39,4 @@
     }                                                                                              \
                                                                                                    \
     stack->size--;                                                                                 \
-  }\
+  }

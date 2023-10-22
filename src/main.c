@@ -3,14 +3,21 @@
 #include <stdlib.h>
 #include <string.h>
 #include "stack.h"
+#include "tree.h"
 
-STACK(char);
-typedef Stack_char String;
+STACK(char,String);
 void append(String * stack, String * data){
   for(size_t i = 0; i < data->size; i++){
-    Stack_char_push(stack,data->data[i]);
+    String_push(stack,data->data[i]);
   }
 }
+
+STACK(String,Stack_String);
+typedef struct StringTree StringTree;
+struct StringTree{
+  String data;
+  Stack_String childs;
+};
 
 enum STATE { VIRGOLA, COMMENTO, MACRO, GRAFFA_A, GRAFFA_B };
 
