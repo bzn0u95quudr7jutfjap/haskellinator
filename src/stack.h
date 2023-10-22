@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define STACK(T,STACK) MAKE_STACK(T, STACK, STACK##_push, STACK##_pop)
+#define STACK(T, STACK) MAKE_STACK(T, STACK, STACK##_push, STACK##_pop)
 #define MAKE_STACK(T, STACK, PUSH, POP)                                                            \
   typedef struct STACK STACK;                                                                      \
                                                                                                    \
@@ -9,7 +9,14 @@
     T *data;                                                                                       \
     size_t capacity;                                                                               \
     size_t size;                                                                                   \
+    void (*const push)(STACK *, T);                                                                \
+    void (*const pop)(STACK *);                                                                    \
   };                                                                                               \
+                                                                                                   \
+  void PUSH(STACK *stack, T data);                                                                 \
+  void POP(STACK *stack);                                                                          \
+  const static STACK New##STACK = {                                                                \
+      .data = NULL, .capacity = 0, .size = 0, .push = PUSH, .pop = POP};                           \
                                                                                                    \
   void PUSH(STACK *stack, T data) {                                                                \
     if (stack->size == stack->capacity) {                                                          \
