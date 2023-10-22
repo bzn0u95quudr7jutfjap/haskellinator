@@ -2,6 +2,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "stack.h"
+
+STACK(char);
+typedef Stack_char String;
+void append(String * stack, String * data){
+  for(size_t i = 0; i < data->size; i++){
+    Stack_char_push(stack,data->data[i]);
+  }
+}
 
 enum STATE { VIRGOLA, COMMENTO, MACRO, GRAFFA_A, GRAFFA_B };
 
