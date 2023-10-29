@@ -81,7 +81,7 @@ bool is_white(char c) {
 }
 
 bool is_speciale(char c) {
-  static const char *const charset = "<>{}()[]#.;,+-*/";
+  static const char *const charset = "<>{}()[]#.;,+-*/=&|";
   return is_any_of(c, strlen(charset), charset);
 }
 
@@ -272,6 +272,58 @@ void merge_parenthesis(Stack_String *stack) {
   }
 }
 
+bool is_operatore(String *str) { return str != NULL && str->size == 1 && is_speciale(str->data[0]); }
+
+void merge_operatori(Stack_String *stack) {
+  Stack_String ops = NewStack_String;
+  push(&ops, from_cstr("<="));
+  push(&ops, from_cstr(">="));
+  push(&ops, from_cstr("=="));
+  push(&ops, from_cstr("!="));
+  push(&ops, from_cstr("&&"));
+  push(&ops, from_cstr("||"));
+  push(&ops, from_cstr("++"));
+  push(&ops, from_cstr("--"));
+  push(&ops, from_cstr("->"));
+  push(&ops, from_cstr("+="));
+  push(&ops, from_cstr("-="));
+  push(&ops, from_cstr("*="));
+  push(&ops, from_cstr("/="));
+  push(&ops, from_cstr("&="));
+  push(&ops, from_cstr("|="));
+  String *str = NULL;
+  String *str2 = NULL;
+  for (size_t i = 0; i < stack->size; i++) {
+    str = get(stack, i);
+    str2 = get(stack, i + 1);
+    if (!is_operatore(str) || !is_operatore(str2)) {
+      continue;
+    }
+    char comb[3] = {str->data[0], str2->data[0], 0};
+    for (size_t j = 0; j < ops.size; j++) {
+      if (strcmp(c_str(get(&ops, j)), comb) != 0) {
+        continue;
+      }
+      if (strcmp("->", comb) == 0) {
+        String *obj = get(stack, i - 1);
+        String *attr = get(stack, i + 2);
+        append(obj, str);
+        append(obj, str2);
+        append(obj, attr);
+        str->size = 0;
+        str2->size = 0;
+        attr->size = 0;
+        i += 2;
+      } else {
+        append(str, str2);
+        i += 1;
+        str2->size = 0;
+      }
+      break;
+    }
+  }
+}
+
 int main(int argc, const char *argv[]) {
   if (argc == 1) {
     fprintf(stderr, "File da formattare non dato\n\nSINTASSI: %s <FILE>\n\n", argv[0]);
@@ -286,7 +338,8 @@ int main(int argc, const char *argv[]) {
 
   Stack_String codeblocks = remove_empty_strings(parse_code_into_words(f));
   merge_include_macros(&codeblocks);
-  merge_parenthesis(&codeblocks);
+  merge_operatori(&codeblocks);
+  //merge_parenthesis(&codeblocks);
   for (size_t i = 0; i < codeblocks.size; i++) {
     printf("%7zu : %s\n", i, c_str(get(&codeblocks, i)));
   }
