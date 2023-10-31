@@ -33,8 +33,18 @@ bool is_white(char c) {
   return is_any_of(c, strlen(charset), charset);
 }
 
-bool is_speciale(char c) {
-  static const char *const charset = "<>{}()[]#.;,+-*/=&|";
+bool is_parenthesis(char c) {
+  static const char *const charset = "(){}[]";
+  return is_any_of(c, strlen(charset), charset);
+}
+
+bool is_operator(char c) {
+  static const char *const charset = "+-*/&|!=<>";
+  return is_any_of(c, strlen(charset), charset);
+}
+
+bool is_special(char c) {
+  static const char *const charset = "#.;,";
   return is_any_of(c, strlen(charset), charset);
 }
 
@@ -120,6 +130,35 @@ Stack_String parse_code_into_words(FILE *stream) {
 
   fseek(stream, pos, SEEK_SET);
   return code;
+}
+
+void parse_file_into_words_red(Stack_String *stack, FILE *stream) {
+  static void (*const this)(Stack_String *, FILE *) = parse_file_into_words_red;
+  char c = fgetc(stream);
+  if (c == EOF) {
+    return;
+  }
+
+  if (is_white(c)) {
+    push(stack, NewString);
+    return this(stack, stream);
+  }
+
+  if (is_parenthesis(c)) {
+    push(stack, NewString);
+    String *line = get(stack, -1);
+    push(line, c);
+    push(stack, NewString);
+    return this(stack, stream);
+  }
+
+  if (is_operator(c)) {
+    //TODO
+  }
+
+  String *line = get(stack, -1);
+  push(line, c);
+  return this(stack, stream);
 }
 
 void remove_empty_strings(Stack_String *stack) {
