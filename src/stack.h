@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#ifndef STACK_TEMPLATE
+#define STACK_TEMPLATE
+
 #define DECLARE_STACK(T, STACK)                                                                                        \
   typedef struct STACK STACK;                                                                                          \
   struct STACK {                                                                                                       \
@@ -54,3 +57,5 @@
     typeof(STACK_P) stack = STACK_P;                                                                                   \
     stack->pop(stack);                                                                                                 \
   })
+
+#endif
