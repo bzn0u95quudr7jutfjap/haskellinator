@@ -113,7 +113,7 @@ Stack_String parse_code_into_words(FILE *stream) {
       continue;
     }
 
-    if (is_speciale(c)) {
+    if (is_special(c)) {
       push(&code, NewString);
       String *line = &(code.data[code.size - 1]);
       push(line, c);
@@ -220,7 +220,7 @@ void merge_include_macros_rec(Stack_String *stack, size_t i) {
   return this(stack, i + 1);
 }
 
-bool is_operatore(String *str) { return str != NULL && str->size == 1 && is_speciale(str->data[0]); }
+bool is_operatore(String *str) { return str != NULL && str->size == 1 && is_special(str->data[0]); }
 
 void merge_operatori(Stack_String *stack) {
   Stack_String ops = NewStack_String;
