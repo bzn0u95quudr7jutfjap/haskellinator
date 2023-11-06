@@ -5,6 +5,7 @@ set(C_SOURCES
   src/main.c
   src/string_class.c
   src/stack_string.c
+  src/parenthesis.c
 )
 
 add_compile_options("-g")
