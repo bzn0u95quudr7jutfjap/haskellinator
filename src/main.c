@@ -303,6 +303,25 @@ void merge_include_macros_rec(Stack_String *stack, size_t i) {
 
 void find_parentesi_aperta(Stack_String *stack, size_t i);
 
+void merge_comas(Stack_String *stack, size_t i) {
+  if (i >= stack->size) {
+    return;
+  }
+
+  String *line = at(stack, i);
+  String *next = at(stack, i + 1);
+  if (line == NULL || next == NULL) {
+    return;
+  }
+
+  if (next->size > 0 && *at(next, 0) == ',') {
+    move_into(line,next);
+    return merge_comas(stack, i + 2);
+  }
+
+  return merge_comas(stack, i + 1);
+}
+
 int main(int argc, const char *argv[]) {
   if (argc == 1) {
     fprintf(stderr, "File da formattare non dato\n\nSINTASSI: %s <FILE>\n\n", argv[0]);
@@ -319,6 +338,7 @@ int main(int argc, const char *argv[]) {
   remove_empty_strings(&codeblocks);
   merge_include_macros_rec(&codeblocks, 0);
   merge_unary_operators(&codeblocks, 0);
+  merge_comas(&codeblocks, 0);
   find_parentesi_aperta(&codeblocks, 0);
   remove_empty_strings(&codeblocks);
   for (size_t i = 0; i < codeblocks.size; i++) {
