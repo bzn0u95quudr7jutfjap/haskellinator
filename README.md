@@ -31,4 +31,4 @@ Dopo
 
     ./haskellinator <FILE>
 
-l'output verra stampato sul terminale in stdout
+l'output viene stampato sul terminale in stdout
